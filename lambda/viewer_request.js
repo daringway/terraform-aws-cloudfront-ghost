@@ -3,20 +3,22 @@ function handler (event) {
   // Extract the request from the CloudFront event that is sent to Lambda@Edge
   var request = event.request;
   var host = request.headers.host.value;
+  var aliases = ${redirect_from_list};
+  var redirectTo = "${redirect_to}";
 
-// %{ if apex_redirect }
-  // start apex_redirect to www
-  if (host.split('.').length === 2) {
-    var response = {
-      statusCode: 301,
-      statusDescription: 'Redirecting to www domain',
-      headers:
-        { "location": { "value": `https://www.$${host}$${request.uri}` } }
+  for (var i = 0; i < aliases.length; i++) {
+    var alias = aliases[i];
+    if (host === alias) {
+      var response = {
+        statusCode: 301,
+        statusDescription: 'Redirecting to website domain',
+        headers:
+          {"location": {"value": `https://$${redirectTo}$${request.uri}`}}
+      }
+
+      return response;
     }
-
-    return response;
   }
-// %{endif}
 
 // %{ if append_slash }
   // Start append_slash
@@ -42,24 +44,6 @@ function handler (event) {
     return response;
   }
 // %{endif}
-
-  // // only need to check for trailing / as the directory checker above will add when needed.
-  // if (config.ghost_hostname.length > 0 &&
-  //   ((request.uri.startsWith("/ghost/")
-  //     || request.uri.endsWith("/edit/")))) {
-  //
-  //   return {
-  //     status: '307',
-  //     statusDescription: `Redirecting domain`,
-  //     headers: {
-  //       location: [{
-  //         key: 'Location',
-  //         value: `https://$${config.ghost_hostname}$${request.uri}`
-  //       }]
-  //     },
-  //     body: temp_redirect_body
-  //   };
-  // }
 
 // %{ if index_rewrite }
     // Start index_rewrite

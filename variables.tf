@@ -3,8 +3,10 @@ variable "tags" {
   type = map(string)
 }
 
-variable "dns_zone_name" {
-  type = string
+variable "public_fqdn" {
+  type        = string
+#   default     = "www"
+  description = "The public hostname such as www in www.acme.com"
 }
 
 variable "acm_cert_arn" {
@@ -14,17 +16,10 @@ variable "acm_cert_arn" {
 
 variable "application" {
   type        = string
-  description = "Application Id Name"
+  description = "Application Name"
 }
 
-variable "cluster_info" {
-  type = object({
-    database_arn  = string,
-    database_host = string,
-    database_port = string,
-    vpc_id        = string,
-    subnet_ids : list(string),
-    security_groups : list(string)
-    //    log_bucket_name : string
-  })
+variable "cms_fqdn" {
+  type        = string
+  description = "The ghost FQDN hostname of the EC2 instance"
 }
