@@ -113,11 +113,21 @@ resource "aws_cloudfront_distribution" "www" {
       }
     }
 
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.request.arn
+    }
+    lambda_function_association {
+      event_type   = "origin-response"
+      lambda_arn = aws_lambda_function.origin_response.qualified_arn
+    }
+
     min_ttl                = 0
     default_ttl            = 0
     max_ttl                = 0
     compress               = false
     viewer_protocol_policy = "redirect-to-https"
+
   }
 
   default_cache_behavior {
@@ -148,6 +158,10 @@ resource "aws_cloudfront_distribution" "www" {
     function_association {
       event_type   = "viewer-request"
       function_arn = aws_cloudfront_function.request.arn
+    }
+    lambda_function_association {
+      event_type   = "origin-response"
+      lambda_arn = aws_lambda_function.origin_response.qualified_arn
     }
 
     //    3600 1 hour 86400 is 1 day and

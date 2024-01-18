@@ -34,4 +34,6 @@ locals {
 
   acm_cert_arn = var.acm_cert_arn
 
+  lambda_name = "${local.application}-origin-response"
+
 }

@@ -8,6 +8,7 @@ local
 (^bootstrap)/terraform.tfstate
 terraform.tfstate.backup
 site-config.tfvars
+*.zip
 
 # Mac OS X
 .DS_Store
