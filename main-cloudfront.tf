@@ -44,13 +44,13 @@ resource "aws_cloudfront_distribution" "www" {
       http_port              = 80
       https_port             = 443
       origin_protocol_policy = "https-only"
-      origin_ssl_protocols   = ["SSLv3", "TLSv1.2"]  # Preferably use TLSv1.2 and TLSv1.3
+      origin_ssl_protocols   = ["TLSv1.2"]  # Preferably use TLSv1.2 and TLSv1.3
     }
 
-    custom_header {
-      name  = "X-Forwarded-Host"
-      value = local.public_fqdn
-    }
+#    custom_header {
+#      name  = "X-Forwarded-Host"
+#      value = local.public_fqdn
+#    }
 
     custom_header {
       name  = "X-Forwarded-Proto"
@@ -70,13 +70,13 @@ resource "aws_cloudfront_distribution" "www" {
       http_port              = 80
       https_port             = 443
       origin_protocol_policy = "https-only"
-      origin_ssl_protocols   = ["SSLv3", "TLSv1.2"]  # Preferably use TLSv1.2 and TLSv1.3
+      origin_ssl_protocols   = ["TLSv1.2"]  # Preferably use TLSv1.2 and TLSv1.3
     }
 
-    custom_header {
-      name  = "X-Forwarded-Host"
-      value = local.cms_fqdn
-    }
+#    custom_header {
+#      name  = "X-Forwarded-Host"
+#      value = local.cms_fqdn
+#    }
 
     custom_header {
       name  = "X-Forwarded-Proto"
@@ -106,16 +106,11 @@ resource "aws_cloudfront_distribution" "www" {
 
     forwarded_values {
       query_string = true
-      headers      = ["Origin", "Referer", "User-Agent"]
+      headers      = ["Origin", "Referer", "User-Agent", "Host"]
 
       cookies {
         forward = "all"
       }
-    }
-
-    function_association {
-      event_type   = "viewer-request"
-      function_arn = aws_cloudfront_function.request.arn
     }
 
     min_ttl                = 0
