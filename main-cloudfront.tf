@@ -9,7 +9,7 @@ resource "aws_cloudfront_function" "request" {
     redirect_from_list = local.cloudfront_aliases_string,
     redirect_to = local.public_fqdn,
     index_rewrite = false,
-    append_slash = true
+    append_slash = false
   })
   lifecycle {
     create_before_destroy = true
