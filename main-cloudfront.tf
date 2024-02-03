@@ -1,15 +1,14 @@
-
 # This is use when communicaiton with the ghost server.
 resource "aws_cloudfront_function" "request" {
   name    = "${local.base_name}-viewer_request"
   runtime = "cloudfront-js-2.0"
   comment = "my function"
   publish = true
-  code = templatefile("${path.module}/lambda/viewer_request.js", {
+  code    = templatefile("${path.module}/lambda/viewer_request.js", {
     redirect_from_list = local.cloudfront_aliases_string,
-    redirect_to = local.public_fqdn,
-    index_rewrite = false,
-    append_slash = false
+    redirect_to        = local.public_fqdn,
+    index_rewrite      = false,
+    append_slash       = false
   })
   lifecycle {
     create_before_destroy = true
@@ -17,8 +16,9 @@ resource "aws_cloudfront_function" "request" {
 }
 
 resource "aws_cloudfront_distribution" "www" {
-  enabled = true
-  comment = local.base_name
+  enabled         = true
+  comment         = local.base_name
+  is_ipv6_enabled = true
 
   aliases = local.cloudfront_aliases
 
@@ -47,10 +47,10 @@ resource "aws_cloudfront_distribution" "www" {
       origin_ssl_protocols   = ["TLSv1.2"]  # Preferably use TLSv1.2 and TLSv1.3
     }
 
-#    custom_header {
-#      name  = "X-Forwarded-Host"
-#      value = local.public_fqdn
-#    }
+    #    custom_header {
+    #      name  = "X-Forwarded-Host"
+    #      value = local.public_fqdn
+    #    }
 
     custom_header {
       name  = "X-Forwarded-Proto"
@@ -73,10 +73,10 @@ resource "aws_cloudfront_distribution" "www" {
       origin_ssl_protocols   = ["TLSv1.2"]  # Preferably use TLSv1.2 and TLSv1.3
     }
 
-#    custom_header {
-#      name  = "X-Forwarded-Host"
-#      value = local.cms_fqdn
-#    }
+    #    custom_header {
+    #      name  = "X-Forwarded-Host"
+    #      value = local.cms_fqdn
+    #    }
 
     custom_header {
       name  = "X-Forwarded-Proto"
@@ -88,7 +88,7 @@ resource "aws_cloudfront_distribution" "www" {
   }
 
   ordered_cache_behavior {
-    path_pattern = "/ghost/*"
+    path_pattern    = "/ghost/*"
     allowed_methods = [
       "GET",
       "HEAD",
@@ -151,7 +151,7 @@ resource "aws_cloudfront_distribution" "www" {
       function_arn = aws_cloudfront_function.request.arn
     }
     lambda_function_association {
-      event_type   = "origin-response"
+      event_type = "origin-response"
       lambda_arn = aws_lambda_function.origin_response.qualified_arn
     }
 
